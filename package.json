@@ -1,0 +1,24 @@
+{
+  "name": "geniuslink-mcp-server",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "description": "Read-only Geniuslink API bridge for MCP",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.20.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0",
+    "@types/node": "^22.0.0"
+  }
+}

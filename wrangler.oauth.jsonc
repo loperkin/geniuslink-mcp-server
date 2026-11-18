@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "geniuslink-mcp-server",
+  "name": "geniuslink-mcp-oauth-test",
   "main": "oauth-worker.js",
   "compatibility_date": "2026-11-01",
   "compatibility_flags": [

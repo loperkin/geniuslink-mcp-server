@@ -2,11 +2,25 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { getConfig, LEGACY_GET_PATHS, readReport } from "./client.js";
+import { listLinks, listLinksPages } from "./links.js";
 
-const server = new McpServer({ name: "geniuslink-mcp-server", version: "0.2.0" });
+const server = new McpServer({ name: "geniuslink-mcp-server", version: "0.3.0" });
 const querySchema = z.record(z.string()).optional().describe(
   "Optional query parameters copied from the endpoint's official Swagger documentation; do not include credentials."
 );
+
+const linkOptions = {
+  take: z.number().int().min(1).max(100).optional(),
+  skip: z.number().int().min(0).max(1000000).optional(),
+  groupid: z.number().int().min(0).optional(),
+  keyword: z.string().max(200).optional(),
+  sortBy: z.string().max(200).optional(),
+  includeArchived: z.boolean().optional(),
+  linksCreatedStart: z.string().max(200).optional(),
+  linksCreatedEnd: z.string().max(200).optional(),
+  baseShortCodes: z.array(z.string()).max(1).optional(),
+  linkTypes: z.array(z.string()).max(1).optional()
+};
 
 function result(data: unknown) {
   return { content: [{ type: "text" as const, text: JSON.stringify(data) }] };
@@ -38,9 +52,22 @@ server.tool(
 
 server.tool(
   "geniuslink_list_links",
-  "List existing Geniuslink short links using the legacy v1 endpoint. Query parameters must follow Swagger docs.",
-  { query: querySchema },
-  async ({ query }) => report(LEGACY_GET_PATHS.links, query ?? {})
+  "List Geniuslink links with documented v1 filters, pagination, and click totals.",
+  linkOptions,
+  async (options) => {
+    try { return result(await listLinks(options)); }
+    catch (error) { return errorResult(error); }
+  }
+);
+
+server.tool(
+  "geniuslink_list_all_links",
+  "Fetch up to 20 bounded pages of links, with continuation offset. Start with a small number of pages.",
+  { ...linkOptions, maxPages: z.number().int().min(1).max(20).optional() },
+  async ({ maxPages, ...options }) => {
+    try { return result(await listLinksPages(options, maxPages ?? 5)); }
+    catch (error) { return errorResult(error); }
+  }
 );
 
 server.tool(

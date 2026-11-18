@@ -3,5 +3,11 @@
   "name": "geniuslink-mcp-server",
   "main": "worker.js",
   "compatibility_date": "2026-11-01",
-  "workers_dev": true
+  "workers_dev": true,
+  "kv_namespaces": [
+    {
+      "binding": "OAUTH_KV",
+      "id": "559a5b7e9e7a466ea502cc961a9cecd4"
+    }
+  ]
 }

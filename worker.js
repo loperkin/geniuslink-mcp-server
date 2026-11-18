@@ -39,7 +39,7 @@ function validate(name, args) {
   for (const [key, value] of Object.entries(args)) {
     const rule = schema.properties[key];
     if (!rule) throw new Error("Unsupported parameter: " + key);
-    if (typeof value !== rule.type || (rule.type === "integer" && !Number.isInteger(value))) throw new Error("Invalid type for " + key);
+    if (rule.type === "integer" ? (typeof value !== "number" || !Number.isInteger(value)) : typeof value !== rule.type) throw new Error("Invalid type for " + key);
     if (rule.minimum !== undefined && value < rule.minimum || rule.maximum !== undefined && value > rule.maximum) throw new Error("Invalid range for " + key);
     if (rule.enum && !rule.enum.includes(value)) throw new Error("Invalid value for " + key);
     if (rule.pattern && !new RegExp(rule.pattern).test(value)) throw new Error("Invalid format for " + key);

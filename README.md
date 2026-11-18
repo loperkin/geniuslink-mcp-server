@@ -113,7 +113,7 @@ Example MCP tool arguments:
 
 The documented response contains `clicksByDate` and `clicksByDatePP`, with timestamped `Key` and metric-bearing `Value` objects. Metrics include `clicks`, `clicksMinusBot`, `clicksMinusSharedAndBot`, `clientAffiliated`, `spider`, and potential consolidated commission/conversion fields. **The existence of these fields in the schema does not mean your account receives populated commission data.** We preserve the original response rather than treating example zeros as real performance.
 
-The API has not been live-tested. In the copied Swagger parameter text, `shortcode` appears as a query parameter; confirm its placement in the expanded explorer if the live API rejects it.
+The remote production link and account trend tools have been used successfully; the local stdio interface and every optional v1 endpoint have not all been independently verified. In the copied Swagger parameter text, `shortcode` appears as a query parameter; confirm its placement in the expanded explorer if the live API rejects it.
 
 ## Install locally
 
@@ -131,7 +131,7 @@ npm start
 
 Set `GENIUSLINK_API_KEY` and `GENIUSLINK_API_SECRET` in your MCP client's private environment configuration. See [`.env.example`](.env.example). Never paste actual credentials into ChatGPT, screenshots, issues, or GitHub files.
 
-The client uses the documented `X-Api-Key` and `X-Api-Secret` HTTP headers. No credentials or requests have yet been tested against a live Geniuslink account.
+The client uses the documented `X-Api-Key` and `X-Api-Secret` HTTP headers. The remote Worker has been used with a live account; local stdio setup must be configured and verified independently.
 
 ### Sample stdio client configuration
 
@@ -156,7 +156,7 @@ Do **not** save a real-key version of that JSON in a repository.
 
 ## Query parameters: verify before use
 
-The screenshot of the Geniuslink API Explorer shows endpoint **names**, not required query parameter definitions. All report tools therefore accept a `query` map of documented string parameters. Before calling a report, expand that specific operation in [the Geniuslink API Explorer](https://api.geni.us/) and read its parameter names, required fields and response examples.
+For the **local stdio implementation**, some less-common report endpoints may still require consulting the Geniuslink API Explorer for documented parameter definitions. The remote Worker instead exposes typed parameters for its seven tools. Before calling a report, expand that specific operation in [the Geniuslink API Explorer](https://api.geni.us/) and read its parameter names, required fields and response examples.
 
 For example, the MCP call for `geniuslink_link_click_trend` has the form:
 
@@ -173,17 +173,17 @@ This is deliberately **not** a working API example; we won't guess parameter nam
 - No arbitrary hosts, arbitrary methods or credentials in query strings.
 - Requests time out after 15 seconds; responses are limited to 1 MiB.
 - API errors return HTTP status only, without logging response bodies that may contain sensitive information.
-- The server is **local stdio**. It cannot be connected to ChatGPT as a remote MCP connector until a secure HTTPS transport, authentication and deployment are implemented.
+- The **local server** uses stdio; the separately deployed Cloudflare Worker provides an authenticated HTTPS MCP endpoint restricted to the owner's GitHub account.
 - v1 is legacy. Do not assume it remains supported merely because its routes appear in Swagger.
 - No pricing information should be published in Purpose in Practice buying guides; let readers choose what fits their budgets.
 
 ## Development roadmap
 
-1. **Verify v1 routes** with your account in the API Explorer; capture parameter names and safe redacted example responses.
-2. Add typed parameters, pagination and mocked contract tests to the reporting tools.
-3. Confirm which data are actually available, including link clicks, referrers and conversion data.
-4. Add secure, authenticated remote MCP transport and deployment instructions, if supported by the target ChatGPT connector.
-5. Eventually switch the API adapter to supported v3 reporting routes if Geniuslink publishes them, while preserving the MCP tool names.
+1. Keep remote tool schemas and documentation aligned, with mocked tests for paging and reporting edge cases.
+2. Validate the reporting period and semantics of `totalClicks` and verify date-bucket coverage.
+3. Confirm which additional v1 or supported v3 reporting endpoints are reliable, including any actual conversion data.
+4. If offering third-party access, design per-user Geniuslink authentication and isolation rather than sharing the owner's credentials.
+5. Consider an optional agent skill after confirming that purchasers can actually connect to the required tools.
 
 ## References
 

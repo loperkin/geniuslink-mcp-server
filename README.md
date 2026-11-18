@@ -2,7 +2,7 @@
 
 Community-built **read-only Geniuslink integration** for MCP clients, developed for Purpose in Practice and PIP Builds.
 
-> **Status: v0.3 integration prototype.** The documented legacy **v1** endpoints for short links and click analytics are now wired into named MCP tools. They are visible in the Geniuslink API Explorer, but their continued availability, required query parameters, response formats and credentials have **not** been live-tested. v2/v3 can be added without rewriting the MCP interface.
+> **Status: v0.4 integration prototype.** The documented legacy **v1** endpoints for short links and click analytics are now wired into named MCP tools. They are visible in the Geniuslink API Explorer, but their continued availability, required query parameters, response formats and credentials have **not** been live-tested. v2/v3 can be added without rewriting the MCP interface.
 
 ## Available MCP tools
 
@@ -56,6 +56,32 @@ Example MCP arguments for `geniuslink_list_all_links`:
 The pagination tool stops after a short page or the configured page limit and returns a `nextSkip` value. A full final page does **not** prove there are more links. To avoid inventing behavior, array filters currently accept at most one value, until their Swagger query serialization is verified.
 
 **Important:** `totalClicks` is a click count, not a verified conversion or commission figure. Its reporting period is not specified by the example schema, so do not label it lifetime or monthly without confirmation.
+
+## Verified link click-trend parameters
+
+The API Explorer's `GET /v1/reports/link-click-trend-by-resolution` operation documents:
+
+- `shortcode` (required): link short code (not a full URL)
+- `start`, `end` (required): `YYYY-MM-DD`
+- `retailerid` (optional): retailer filter, e.g. `AMAZON`; omit for all
+- `resolution`: `hour`, `day`, `month` or `lifetime`
+- `dopreviousperiod`: integer flag, 0 or 1, for previous-period comparison
+
+Example MCP tool arguments:
+
+```json
+{
+  "shortcode": "eS1fw",
+  "start": "2026-11-01",
+  "end": "2026-11-18",
+  "resolution": "day",
+  "dopreviousperiod": 1
+}
+```
+
+The documented response contains `clicksByDate` and `clicksByDatePP`, with timestamped `Key` and metric-bearing `Value` objects. Metrics include `clicks`, `clicksMinusBot`, `clicksMinusSharedAndBot`, `clientAffiliated`, `spider`, and potential consolidated commission/conversion fields. **The existence of these fields in the schema does not mean your account receives populated commission data.** We preserve the original response rather than treating example zeros as real performance.
+
+The API has not been live-tested. In the copied Swagger parameter text, `shortcode` appears as a query parameter; confirm its placement in the expanded explorer if the live API rejects it.
 
 ## Install locally
 

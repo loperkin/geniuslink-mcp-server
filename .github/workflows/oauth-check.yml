@@ -4,6 +4,8 @@ on:
     branches: [main]
     paths:
       - 'oauth-worker.js'
+      - 'oauth-production.js'
+      - 'wrangler.jsonc'
       - 'worker.js'
       - 'wrangler.oauth.jsonc'
       - 'package.json'
@@ -19,4 +21,6 @@ jobs:
           node-version: '22'
       - run: npm install
       - run: node --check oauth-worker.js
+      - run: node --check oauth-production.js
       - run: npx wrangler deploy --config wrangler.oauth.jsonc --dry-run --outdir /tmp/oauth-build
+      - run: npx wrangler deploy --config wrangler.jsonc --dry-run --outdir /tmp/oauth-production-build

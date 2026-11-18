@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "geniuslink-mcp-server",
-  "main": "worker.js",
+  "main": "oauth-production.js",
   "compatibility_date": "2026-11-01",
   "workers_dev": true,
   "kv_namespaces": [

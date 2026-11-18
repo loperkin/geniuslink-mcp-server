@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "geniuslink-mcp-server",
+  "main": "oauth-worker.js",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": [
+    "global_fetch_strictly_public"
+  ],
+  "workers_dev": true,
+  "kv_namespaces": [
+    {
+      "binding": "OAUTH_KV",
+      "id": "559a5b7e9e7a466ea502cc961a9cecd4"
+    }
+  ]
+}

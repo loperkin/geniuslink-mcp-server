@@ -2,9 +2,41 @@
 
 Community-built **read-only Geniuslink integration** for MCP clients, developed for Purpose in Practice and PIP Builds.
 
-> **Status: v0.4 integration prototype.** The documented legacy **v1** endpoints for short links and click analytics are now wired into named MCP tools. They are visible in the Geniuslink API Explorer, but their continued availability, required query parameters, response formats and credentials have **not** been live-tested. v2/v3 can be added without rewriting the MCP interface.
+> **Status (November 2026):** The production Cloudflare Workers remote MCP has been deployed, authenticated with GitHub OAuth, and used successfully for read-only Geniuslink link inventory and click reporting. The **local stdio implementation** below is a separate interface and some of its older documentation still describes pre-deployment testing. Geniuslink v1 is a legacy API; specific endpoints and metric availability can change.
 
-## Available MCP tools
+## Start here: remote MCP vs. local stdio
+
+- **Production remote MCP:** `https://geniuslink-mcp-server.purposeinpractice5.workers.dev/mcp`, OAuth through GitHub. **Owner-only:** the current authorization code accepts only the `loperkin` GitHub identity; other users cannot connect their own Geniuslink accounts through this deployment.
+- **Staging remote MCP:** `https://geniuslink-mcp-oauth-test.purposeinpractice5.workers.dev/mcp`; intended for testing, not customer use.
+- **Local stdio MCP:** install and run from source with your own Geniuslink API credentials. Its tool set is not identical to the remote implementation.
+- **Agent usage guide:** [docs/AGENT_GUIDE.md](docs/AGENT_GUIDE.md) explains when to call each remote tool, pagination, analytics semantics, error handling, and safety.
+- **Security:** no Geniuslink secrets should be put in a chat, public skill, or repository. The remote endpoint is read-only and is **not** a general-purpose public API for other users.
+
+### Remote production tools
+
+| Tool | Purpose |
+|---|---|
+| `geniuslink_api_status` | Verify server credential configuration without querying Geniuslink |
+| `geniuslink_list_links` | Search and paginate short links; inspect link-list click totals |
+| `geniuslink_link_click_trend` | Trend report for one short code |
+| `geniuslink_account_click_trend` | Account-wide click trend |
+| `geniuslink_link_clicks_by_country` | Country breakdown for a link |
+| `geniuslink_account_clicks_by_country` | Country breakdown for the account |
+| `geniuslink_groups` | List groups |
+
+The following **local stdio** tools are not exposed by the remote Worker: `geniuslink_list_all_links`, `geniuslink_link_top_attributes`, and `geniuslink_read_report`. The local and remote schemas may differ. Refer to `worker.js` for the remote implementation.
+
+### Reading click metrics correctly
+
+- Link-list `totalClicks` is not necessarily a verified lifetime count; do not label it lifetime without confirmation of its reporting period.
+- `clicks` (raw), `clicksMinusBot` (excluding bots), `clicksMinusSharedAndBot`, and `spider` are distinct fields; report the metric used.
+- Clicks are not verified sales, conversions, or affiliate commissions.
+- Account and per-link date reports can return fewer date buckets than requested; state coverage and don't invent zeroes.
+- Shared short links cannot independently attribute traffic to YouTube versus GitHub versus the website.
+
+## Local stdio implementation (separate from the remote Worker)
+
+## Available local stdio MCP tools
 
 | Tool | API route | Purpose |
 |---|---|---|

@@ -1,0 +1,2 @@
+Cloudflare production deployment trigger.
+The Worker entry point is worker.js and its configuration is wrangler.jsonc.

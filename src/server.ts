@@ -3,8 +3,9 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { getConfig, LEGACY_GET_PATHS, readReport } from "./client.js";
 import { listLinks, listLinksPages } from "./links.js";
+import { linkClickTrend } from "./trends.js";
 
-const server = new McpServer({ name: "geniuslink-mcp-server", version: "0.3.0" });
+const server = new McpServer({ name: "geniuslink-mcp-server", version: "0.4.0" });
 const querySchema = z.record(z.string()).optional().describe(
   "Optional query parameters copied from the endpoint's official Swagger documentation; do not include credentials."
 );
@@ -72,9 +73,19 @@ server.tool(
 
 server.tool(
   "geniuslink_link_click_trend",
-  "Retrieve the legacy v1 click trend for a specific short link; parameters are API-defined, not guessed.",
-  { query: querySchema },
-  async ({ query }) => report(LEGACY_GET_PATHS.linkClickTrend, query ?? {})
+  "Retrieve a link's click trend using the documented legacy v1 parameters and return the original metrics including bot-filtered clicks and available conversion fields.",
+  {
+    shortcode: z.string().min(1).max(120).describe("Short code, not the full geni.us URL"),
+    start: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/).describe("YYYY-MM-DD"),
+    end: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/).describe("YYYY-MM-DD"),
+    retailerid: z.string().max(120).optional().describe("Optional retailer ID, such as AMAZON"),
+    resolution: z.enum(["hour", "day", "month", "lifetime"]),
+    dopreviousperiod: z.number().int().min(0).max(1).optional()
+  },
+  async (options) => {
+    try { return result(await linkClickTrend(options)); }
+    catch (error) { return errorResult(error); }
+  }
 );
 
 server.tool(

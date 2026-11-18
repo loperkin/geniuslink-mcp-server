@@ -1,0 +1,22 @@
+name: Validate OAuth Worker
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'oauth-worker.js'
+      - 'worker.js'
+      - 'wrangler.oauth.jsonc'
+      - 'package.json'
+      - '.github/workflows/oauth-check.yml'
+  workflow_dispatch:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install
+      - run: node --check oauth-worker.js
+      - run: npx wrangler deploy --config wrangler.oauth.jsonc --dry-run --outdir /tmp/oauth-build

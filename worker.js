@@ -53,10 +53,11 @@ async function callGeniuslink(name, args, env) {
   const url = new URL(PATHS[name], API);
   for (const [key, value] of Object.entries(args)) url.searchParams.set(key, String(value));
   const response = await fetch(url, {
-    method: "GET", redirect: "error",
+    method: "GET", redirect: "manual",
     headers: { "X-Api-Key": env.GENIUSLINK_API_KEY, "X-Api-Secret": env.GENIUSLINK_API_SECRET, Accept: "application/json" },
     signal: AbortSignal.timeout(15000)
   });
+  if (response.status >= 300 && response.status < 400) throw new Error("Geniuslink API returned redirect HTTP " + response.status + "; redirect not followed");
   if (!response.ok) throw new Error("Geniuslink API returned HTTP " + response.status);
   if (Number(response.headers.get("content-length") || 0) > 1048576) throw new Error("Response too large");
   const body = await response.text();

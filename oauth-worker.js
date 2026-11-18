@@ -1,7 +1,7 @@
 import OAuthProvider, { AuthorizationError, CimdFetchError } from "@cloudflare/workers-oauth-provider";
 import legacyWorker from "./worker.js";
 
-const ORIGIN = "https://geniuslink-mcp-server.purposeinpractice5.workers.dev";
+const ORIGIN = "https://geniuslink-mcp-oauth-test.purposeinpractice5.workers.dev";
 const RESOURCE = ORIGIN + "/mcp";
 const OWNER_LOGIN = "loperkin";
 const escapeHtml = (v) => String(v).replace(/[&<>"']/g, (c) => "&#" + c.charCodeAt(0) + ";");

@@ -2,14 +2,15 @@
 
 Community-built **read-only Geniuslink integration** for MCP clients, developed for Purpose in Practice and PIP Builds.
 
-> **Status: v0.2 integration prototype.** The documented legacy **v1** endpoints for short links and click analytics are now wired into named MCP tools. They are visible in the Geniuslink API Explorer, but their continued availability, required query parameters, response formats and credentials have **not** been live-tested. v2/v3 can be added without rewriting the MCP interface.
+> **Status: v0.3 integration prototype.** The documented legacy **v1** endpoints for short links and click analytics are now wired into named MCP tools. They are visible in the Geniuslink API Explorer, but their continued availability, required query parameters, response formats and credentials have **not** been live-tested. v2/v3 can be added without rewriting the MCP interface.
 
 ## Available MCP tools
 
 | Tool | API route | Purpose |
 |---|---|---|
 | `geniuslink_api_status` | None | Check local credential configuration safely |
-| `geniuslink_list_links` | `GET /v1/links/list` | List short links |
+| `geniuslink_list_links` | `GET /v1/links/list` | Typed filtering, pagination and link click totals |
+| `geniuslink_list_all_links` | `GET /v1/links/list` | Fetch bounded consecutive pages with continuation offset |
 | `geniuslink_link_click_trend` | `GET /v1/reports/link-click-trend-by-resolution` | Link click trends |
 | `geniuslink_link_clicks_by_country` | `GET /v1/reports/link-clicks-by-country` | Link geography |
 | `geniuslink_link_top_attributes` | `GET /v1/reports/link-top-attributetype-for-range` | Link attribute breakdowns |
@@ -20,6 +21,41 @@ Community-built **read-only Geniuslink integration** for MCP clients, developed 
 Other v1 GET endpoints visible in the API Explorer are included in the allowlist, including `/v1/affiliate/stats`, `/v1/conversion-tracking`, `/v1/exportdata` and group reporting. **Names alone do not establish which metrics or commission data these endpoints return.**
 
 No POST, PUT, PATCH or DELETE operations are exposed. **We do not assume Amazon affiliate commission data is available.**
+
+## Verified from the v1 link-list Swagger schema
+
+The API Explorer confirms these optional query parameters for `GET /v1/links/list`:
+
+| Parameter | Type | Meaning |
+|---|---|---|
+| `baseShortCodes` | array of strings | Filter short codes; multi-value encoding still needs verification |
+| `linkTypes` | array of strings | Filter link types; valid values still need verification |
+| `sortBy` | string | Sort expression; valid values still need verification |
+| `take` | integer | Number of links requested |
+| `skip` | integer | Pagination offset |
+| `groupid` | integer | Group identifier; Swagger says 0 for all |
+| `keyword` | string | Keyword filter |
+| `includeArchived` | boolean | Include archived links |
+| `linksCreatedStart` | date-time | Created-date start |
+| `linksCreatedEnd` | date-time | Created-date end |
+
+The documented response has a `results` array, with fields including `shortUrlCode`, `domain`, `destinationUrl`, `productUrl`, `group`, `trackingCode`, `advertiser`, `totalClicks`, `previousPeriodTotalClicks`, and `percentChangePeriodOverPeriod`. It also includes `allLinksLoaded` and `errorMessage`, whose runtime semantics have not yet been verified.
+
+Example MCP arguments for `geniuslink_list_links`:
+
+```json
+{"take":25,"skip":0,"groupid":0,"includeArchived":false}
+```
+
+Example MCP arguments for `geniuslink_list_all_links`:
+
+```json
+{"take":50,"skip":0,"maxPages":3}
+```
+
+The pagination tool stops after a short page or the configured page limit and returns a `nextSkip` value. A full final page does **not** prove there are more links. To avoid inventing behavior, array filters currently accept at most one value, until their Swagger query serialization is verified.
+
+**Important:** `totalClicks` is a click count, not a verified conversion or commission figure. Its reporting period is not specified by the example schema, so do not label it lifetime or monthly without confirmation.
 
 ## Install locally
 

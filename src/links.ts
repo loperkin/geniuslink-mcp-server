@@ -104,12 +104,14 @@ export async function listLinksPages(options: LinkListOptions = {}, maxPages = 5
   let skip = options.skip ?? 0;
   const results: GeniuslinkLink[] = [];
   let pagesFetched = 0;
+  let hasMore = false;
   for (let i = 0; i < maxPages; i++) {
     const page = await listLinks({ ...options, take, skip });
     pagesFetched++;
     results.push(...page.results);
-    if (page.results.length < take) break;
-    skip += take;
+    hasMore = page.results.length === take;
+    skip += page.results.length;
+    if (!hasMore) break;
   }
-  return { results, pagesFetched, nextSkip: skip + (pagesFetched ? take : 0), truncated: pagesFetched === maxPages };
+  return { results, pagesFetched, nextSkip: skip, truncated: pagesFetched === maxPages && hasMore };
 }

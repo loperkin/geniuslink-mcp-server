@@ -1,0 +1,37 @@
+name: License and release guard
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  license-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify first-party license and package metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f LICENSE
+          grep -Fq 'Purpose in Practice Source-Available Noncommercial License v1.0' LICENSE
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          if (pkg.license !== 'SEE LICENSE IN LICENSE') {
+            throw new Error('Package license metadata must reference LICENSE; permissive licensing is not authorized.');
+          }
+          NODE
+      - name: Verify distributable includes restricted license
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm pack --dry-run --json > /tmp/pip-pack.json
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const files = JSON.parse(fs.readFileSync('/tmp/pip-pack.json','utf8'))[0]?.files?.map(f=>f.path) ?? [];
+          if (!files.includes('LICENSE')) throw new Error('npm package does not include LICENSE');
+          NODE

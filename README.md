@@ -1,3 +1,5 @@
+> **Licensing change proposed (future releases only):** Commercial use of new versions requires separate written permission, subject to verified copyright ownership. This is source-available, **not** OSI-approved open source. Previously distributed MIT versions remain MIT-licensed and can still be commercially reused under their original terms. Review contributor rights, dependencies, package distribution, and custom license enforceability before merge or release. This proposal does not change production access.
+
 # Geniuslink MCP Server
 
 Community-built **read-only Geniuslink integration** for MCP clients, developed for Purpose in Practice and PIP Builds.

@@ -1,21 +1,13 @@
-MIT License
+Purpose in Practice Source-Available Noncommercial License v1.0
+Copyright (c) 2026 Purpose in Practice contributors. All rights reserved except as expressly permitted.
 
-Copyright (c) 2026 Purpose in Practice contributors
+This license applies only to material that its copyright holders have the authority to license under these terms. Previously distributed MIT-licensed copies retain their original MIT permissions. Third-party materials retain their respective licenses.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+1. Permission: You may view, download, run, modify and redistribute the Software for noncommercial purposes, provided you preserve this license and copyright notices.
+2. Noncommercial means activity not primarily intended for commercial advantage or monetary compensation. Commercial uses include selling copies or access, paid hosting, commercial sublicensing, bundling in a paid product, or operating it in a revenue-generating business workflow.
+3. Commercial use requires separate prior written permission from the relevant copyright holders. No commercial rights are granted by this license.
+4. You may not claim endorsement by Purpose in Practice or use its trademarks without permission. No patent or trademark license is granted.
+5. Permission under this license terminates upon breach. Rights validly granted under earlier MIT-licensed versions remain governed by those versions' MIT license.
+6. THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND. TO THE MAXIMUM EXTENT PERMITTED BY LAW THE COPYRIGHT HOLDERS DISCLAIM LIABILITY FOR CLAIMS ARISING FROM USE OF THE SOFTWARE.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Contact the repository owner through official repository channels for commercial licensing inquiries.

@@ -64,8 +64,8 @@ async function callGeniuslink(name, args, env) {
   if (body.length > 1048576) throw new Error("Response too large");
   try { return JSON.parse(body); } catch { throw new Error("Geniuslink returned non-JSON content"); }
 }
-export default {
-  async fetch(request, env) {
+const worker = {
+  async fetch(request, env, options = {}) {
     const url = new URL(request.url);
     if (url.pathname !== "/mcp") return json({ error: "Not found" }, 404);
     if (!env.MCP_AUTH_TOKEN) return json({ error: "MCP authentication is not configured" }, 503);
@@ -86,12 +86,17 @@ export default {
     const id = message.id;
     if (message.method === "initialize") return rpc(id, { protocolVersion: PROTOCOL, capabilities: { tools: { listChanged: false } }, serverInfo: { name: "geniuslink-mcp-server", version: "0.5.0" } });
     if (message.method === "ping") return rpc(id, {});
-    if (message.method === "tools/list") return rpc(id, { tools });
+    if (message.method === "tools/list") return rpc(id, { tools: [...tools, ...(options.tools || [])] });
     if (message.method === "tools/call") {
       const name = message.params?.name, args = message.params?.arguments ?? {};
       try {
-        validate(name, args);
-        const data = await callGeniuslink(name, args, env);
+        let data;
+        if (options.tools?.some(tool => tool.name === name)) {
+          data = await options.call(name, args, env);
+        } else {
+          validate(name, args);
+          data = await callGeniuslink(name, args, env);
+        }
         return rpc(id, { content: [{ type: "text", text: JSON.stringify(data) }] });
       } catch (e) {
         return rpc(id, { isError: true, content: [{ type: "text", text: e instanceof Error ? e.message : "Request failed" }] });
@@ -100,3 +105,9 @@ export default {
     return rpcError(id, -32601, "Method not found");
   }
 };
+
+export function createWorker(options) {
+  return { fetch: (request, env) => worker.fetch(request, env, options) };
+}
+
+export default createWorker();
